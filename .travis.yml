@@ -15,10 +15,20 @@ after_success:
   - docker build -t dhananjayam/multi-nginx ./nginx
   - docker build -t dhananjayam/multi-server ./server
   - docker build -t dhananjayam/multi-worker ./worker
-  # Log in to the docker CLI
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
-  # Take those images and push them to docker hub
   - docker push dhananjayam/multi-client
   - docker push dhananjayam/multi-nginx
   - docker push dhananjayam/multi-server
   - docker push dhananjayam/multi-worker
+
+deploy:
+  provider: elasticbeanstalk
+  region: 'ap-south-1'
+  app: 'multi-docker'
+  env: 'Multi-docker-env'
+  bucket_name: 'elasticbeanstalk-ap-south-1-826986868953'
+  bucket_path: 'docker-multi'
+  on:
+    branch: main
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key: $AWS_SECRET_KEY
